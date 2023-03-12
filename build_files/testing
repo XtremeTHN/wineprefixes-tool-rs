@@ -1,0 +1,43 @@
+#! env /usr/bin/python
+import sys, os, subprocess, time
+from colorama import Style, Fore
+
+if "build" in sys.argv:
+    os.system("./build rebuild")
+home_path = os.path.expanduser('~')
+working_dir = os.getcwd().split("/")
+working_dir.pop()
+working_dir = "/".join(working_dir)
+executable = os.path.join(working_dir, "src", "prefixes")
+print("[.] Test 1: Create prefix", end='\r')
+time.sleep(0.7)
+os.system("../src/prefixes -c TEST1 >> /dev/null")
+if os.path.exists(os.path.join(home_path, ".local", "share", "wineprefixes", "TEST1")):
+    print(f"{Fore.GREEN}[✔ ]{Style.RESET_ALL} Test 1: Create prefix successfuly")
+else:
+    print(f"{Fore.RED}[x]{Style.RESET_ALL} Test1: Failed")
+
+print("[.] Test 2: Getting prefix", end='\r')
+time.sleep(0.7)
+command = subprocess.run([executable,"-g","TEST1"], stdout=subprocess.PIPE)
+if command.stdout.decode("utf-8") != "":
+    print(f"{Fore.GREEN}[✔ ]{Style.RESET_ALL} Test 2: Getting prefix passed")
+else:
+    print(f"{Fore.RED}[x]{Style.RESET_ALL} Test 2: Getting prefix failed")
+
+print("[.] Test 3: Listing prefixes", end='\r')
+time.sleep(0.7)
+command = subprocess.run([executable,"-l"], stdout=subprocess.PIPE)
+if command.stdout.decode("utf-8")[:2] != "No":
+    print(f"{Fore.GREEN}[✔ ]{Style.RESET_ALL} Test 3: Listing prefixes successfuly")
+else:
+    print(f"{Fore.RED}[x]{Style.RESET_ALL} Test 3: Listing prefixes failed")
+
+print("[.] Test 4: Removing a prefix", end='\r')
+time.sleep(0.7)
+command = subprocess.run([executable, "-r", "TEST1"], stdout=subprocess.PIPE)
+
+if command.stdout.decode("utf-8")[:3] != "El ":
+    print(f"{Fore.GREEN}[✔ ]{Style.RESET_ALL} Test 4: Removing a prefix passed")
+else:
+    print(f"{Fore.RED}[x]{Style.RESET_ALL} Test 4: Removing a prefix failed")
