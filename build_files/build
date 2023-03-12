@@ -1,0 +1,22 @@
+#!/bin/bash
+if [ "$1" == "run" ]; then
+	if [ "$(ls ../src/prefixes)" == "" ]; then
+		cargo build
+		cp target/debug/prefixes ../src/prefixes
+	fi
+	../src/prefixes $2 $3
+	exit
+fi
+
+if [ "$1" == "rebuild" ]; then
+    cargo build
+	cp target/debug/prefixes ../src/prefixes
+    exit
+fi
+
+cargo build
+if [ $? -gt 0 ]; then
+	echo "Error al compilar"
+	exit 1
+fi
+cp target/debug/prefixes ../src/prefixes
