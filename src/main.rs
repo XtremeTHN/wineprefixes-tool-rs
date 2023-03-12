@@ -75,14 +75,16 @@ fn main() {
 
     if create_opt != "" {
         let path = format!("{}/.local/share/wineprefixes/{}", home_path, create_opt);
-        fs::create_dir_all(&path);
+        match fs::create_dir_all(&path){
+            Ok(_) => (),
+            Err(_) => process::exit(2),
+        }
         env::set_var("WINEPREFIX", &path);
-        let output = process::Command::new("wineboot")
+        process::Command::new("wineboot")
                 .arg("-u")
                 .output()
                 .expect(&format!("Error al crear el prefijo en la carpeta {}", path));
         println!("{}", path);
-        let stdout = String::from_utf8(output.stdout).unwrap();
     }
 
     if opt.list_opt {
